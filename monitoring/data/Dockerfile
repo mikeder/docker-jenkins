@@ -1,5 +1,5 @@
 FROM centos:7
-MAINTAINER Maxfield Stewart
+MAINTAINER Mike Eder
 
 RUN mkdir /var/lib/grafana
 RUN mkdir /opt/graphite
