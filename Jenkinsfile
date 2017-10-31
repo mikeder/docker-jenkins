@@ -23,7 +23,6 @@ pipeline {
                 dir ("docker-jenkins/jenkins-master/") {
 	                script {
                         def image = docker.build("mikeder/jenkins-master")
-                        sh "${image.id} >> build-ids.txt"
 	                    docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
 		                    image.push("latest")
                             sh "docker rmi ${image.id}"
@@ -38,7 +37,6 @@ pipeline {
                 dir ("docker-jenkins/jenkins-slave/") {
 	                script {
                         def image = docker.build("mikeder/jenkins-slave")
-                        sh "${image.id} >> build-ids.txt"
                         docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
 		                    image.push("latest")
                             sh "docker rmi ${image.id}"
@@ -53,7 +51,6 @@ pipeline {
                 dir ("docker-jenkins/jenkins-data/") {
 	                script {
                         def image = docker.build("mikeder/jenkins-slave")
-                        sh "${image.id} >> build-ids.txt"
                         docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
 		                    image.push("latest")
                             sh "docker rmi ${image.id}"
@@ -68,25 +65,11 @@ pipeline {
                 dir ("docker-jenkins/jenkins-nginx/") {
 	                script {
                         def image = docker.build("mikeder/jenkins-nginx")
-                        sh "${image.id} >> build-ids.txt"
                         docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
 		                    image.push("latest")
                             sh "docker rmi ${image.id}"
                         }
 	                }
-                }
-            }
-        }
-
-        stage('Cleanup Images') {
-            steps {
-                script {
-	                def file = new File('built-ids.txt')
-					file.eachLine { String line ->
-						line.tokenize().each { String word ->
-							sh "docker rmi ${line}"
-						}
-					}
                 }
             }
         }
