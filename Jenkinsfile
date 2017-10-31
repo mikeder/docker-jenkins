@@ -9,6 +9,7 @@ pipeline {
             steps {
                 checkout scm
                 script{
+                    echo "# Building Commit #"
                     def commit = sh(
                         script: "git rev-parse HEAD",
                         returnStdout: true
@@ -21,10 +22,9 @@ pipeline {
             steps {
                 dir ("docker-jenkins/jenkins-master/") {
 	                script {
+                        def image = docker.build("mikeder/jenkins-master")
 	                    docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
-	                        def image = docker.build("mikeder/jenkins-master")
 		                    image.push("latest")
-		                    image.push("${env.BRANCH_NAME}-${env.BUILD_ID}")
                             sh "docker rmi ${image.id}"
 	                    }
 	                }
@@ -36,10 +36,9 @@ pipeline {
             steps {
                 dir ("docker-jenkins/jenkins-slave/") {
 	                script {
+                        def image = docker.build("mikeder/jenkins-slave")
                         docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
-	                        def image = docker.build("mikeder/jenkins-slave")
 		                    image.push("latest")
-		                    image.push("${env.BRANCH_NAME}-${env.BUILD_ID}")
                             sh "docker rmi ${image.id}"
                         }
 	                }
@@ -51,10 +50,9 @@ pipeline {
             steps {
                 dir ("docker-jenkins/jenkins-data/") {
 	                script {
+                        def image = docker.build("mikeder/jenkins-slave")
                         docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
-		                    def image = docker.build("mikeder/jenkins-data")
 		                    image.push("latest")
-		                    image.push("${env.BRANCH_NAME}-${env.BUILD_ID}")
                             sh "docker rmi ${image.id}"
                         }
 	                }
@@ -66,10 +64,9 @@ pipeline {
             steps {
                 dir ("docker-jenkins/jenkins-nginx/") {
 	                script {
+                        def image = docker.build("mikeder/jenkins-nginx")
                         docker.withRegistry('https://index.docker.io/v1/', 'mikeder-dockerhub') {
-		                    def image = docker.build("mikeder/jenkins-nginx")
 		                    image.push("latest")
-		                    image.push("${env.BRANCH_NAME}-${env.BUILD_ID}")
                             sh "docker rmi ${image.id}"
                         }
 	                }
